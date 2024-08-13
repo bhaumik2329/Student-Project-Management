@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_project_management/screens/admin/view_admin_page.dart';
 import 'package:student_project_management/screens/faculty/add_faculty_form.dart';
 import 'package:student_project_management/screens/faculty/view_faculty_page.dart';
 import 'package:student_project_management/screens/login_screen.dart';
@@ -13,6 +14,7 @@ import 'package:student_project_management/screens/project/tags/view_tag_page.da
 import 'package:student_project_management/screens/project/view_project_page.dart';
 import 'package:student_project_management/screens/student/add_student_form.dart';
 import 'package:student_project_management/screens/student/view_student_page.dart';
+import 'package:student_project_management/screens/profile/ProfilePage.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -171,9 +173,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       setState(() {
                         _selectedPage = 'Dashboard';
                       });
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AdminDashboard()),
+                      );
                     },
                   ),
+                  _buildDropdownMenu(
+                      context, 'Admin', Icons.add_moderator_outlined),
                   _buildDropdownMenu(context, 'Student', Icons.school),
                   _buildDropdownMenu(context, 'Faculty', Icons.person),
                   _buildDropdownMenu(context, 'Project', Icons.work),
@@ -181,6 +189,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   _buildDropdownMenu(context, 'Tag', Icons.label),
                 ],
               ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.black),
+              title: Text('My Profile', style: TextStyle(color: Colors.black)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.black),
@@ -200,15 +218,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
       leading: Icon(icon, color: Colors.black),
       title: Text(title, style: const TextStyle(color: Colors.black)),
       children: <Widget>[
-        ListTile(
-          title: Text('Add $title'),
-          onTap: () {
-            setState(() {
-              _selectedPage = 'Add $title';
-            });
-            Navigator.pop(context);
-          },
-        ),
+        if (title != 'Admin')
+          ListTile(
+            title: Text('Add $title'),
+            onTap: () {
+              setState(() {
+                _selectedPage = 'Add $title';
+              });
+              Navigator.pop(context);
+            },
+          ),
         ListTile(
           title: Text('View $title'),
           onTap: () {
@@ -224,6 +243,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   Widget _buildPageContent() {
     switch (_selectedPage) {
+      case 'View Admin':
+        return ViewAdminPage();
       case 'Add Student':
         return AddStudentForm();
       case 'Add Faculty':
